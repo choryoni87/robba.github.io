@@ -530,9 +530,81 @@
       });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
+  /**
+   * GitHub Pages는 정적 호스팅이라 서버 비밀번호가 없습니다.
+   * 아래는 방문자 UI용(클라이언트)이며, 비밀번호는 소스·네트워크에 노출됩니다.
+   * 진짜 비밀 보호: Cloudflare Access, Netlify/Vercel 보호, Private repo 등.
+   */
+  var AUTH_STORAGE_KEY = 'choryoni_intro_auth_v1';
+  var AUTH_PASSWORD = '0606';
+
+  function isAuthed() {
+    try {
+      return sessionStorage.getItem(AUTH_STORAGE_KEY) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setAuthed() {
+    try {
+      sessionStorage.setItem(AUTH_STORAGE_KEY, '1');
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function unlockPageAndRun() {
+    var gate = document.getElementById('auth-gate');
+    var shell = document.getElementById('shell');
+    document.body.classList.remove('auth-locked');
+    if (gate) {
+      gate.setAttribute('hidden', '');
+      gate.setAttribute('aria-hidden', 'true');
+    }
+    if (shell) {
+      shell.removeAttribute('inert');
+    }
     run();
+  }
+
+  function initPasswordGate() {
+    var form = document.getElementById('auth-form');
+    var err = document.getElementById('auth-err');
+    var pass = document.getElementById('auth-pass');
+    if (!form || !pass) {
+      unlockPageAndRun();
+      return;
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (err) {
+        err.setAttribute('hidden', '');
+      }
+      if (pass.value === AUTH_PASSWORD) {
+        setAuthed();
+        unlockPageAndRun();
+      } else {
+        if (err) {
+          err.removeAttribute('hidden');
+        }
+        pass.focus();
+        pass.select();
+      }
+    });
+  }
+
+  function boot() {
+    if (isAuthed()) {
+      unlockPageAndRun();
+      return;
+    }
+    initPasswordGate();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 })();

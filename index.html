@@ -10,10 +10,35 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
-<body>
+<body class="auth-locked">
   <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 
-  <div class="shell">
+  <div
+    id="auth-gate"
+    class="auth-gate"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="auth-gate-title"
+  >
+    <form class="auth-gate__box" id="auth-form" autocomplete="off">
+      <h2 class="auth-gate__title" id="auth-gate-title">비밀번호</h2>
+      <p class="auth-gate__hint">이 소개 페이지를 보려면 비밀번호를 입력하세요.</p>
+      <label class="auth-gate__label" for="auth-pass">비밀번호</label>
+      <input
+        class="auth-gate__input"
+        type="password"
+        id="auth-pass"
+        name="auth-pass"
+        maxlength="32"
+        required
+        autofocus
+      />
+      <button type="submit" class="btn btn--primary auth-gate__submit">확인</button>
+      <p class="auth-gate__err" id="auth-err" role="alert" hidden>비밀번호가 맞지 않습니다.</p>
+    </form>
+  </div>
+
+  <div class="shell" id="shell" inert>
     <header class="site-header" role="banner">
       <div class="container site-header__row">
         <a class="site-logo" href="#top" id="top">김에디터</a>
@@ -62,6 +87,7 @@
         <p class="site-footer__text">가상 인물 <strong>김에디터</strong> 소개 · <code>Introduce.md</code>를 렌더합니다.</p>
         <p class="site-footer__design">색·간격·컴포넌트: <code>DESIGN.md</code> (Meta Store / Dolly 토큰) 참고.</p>
         <p class="site-footer__host"><a href="https://docs.github.com/pages" rel="noopener noreferrer">GitHub Pages</a> · https는 <code>Introduce.md</code> <code>fetch</code> · <code>file://</code> 는 <code>intro-embed.js</code> — 수정 후 <code>./sync-intro-embed.sh</code></p>
+    <p class="site-footer__auth-note">접속 제한은 브라우저용이며 실제 보안은 아닙니다. 공개 저장소·정적 호스팅 한계로 강한 잠금은 불가합니다.</p>
       </div>
     </footer>
   </div>
